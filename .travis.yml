@@ -1,5 +1,6 @@
 language: java
 jdk:
+- oraclejdk8
 - oraclejdk7
 - openjdk7
 #deploy:
@@ -10,4 +11,3 @@ jdk:
 #  on:
 #    repo: salifou/java-xml-utils
 #    tag: true
-#
