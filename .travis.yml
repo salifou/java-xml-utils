@@ -3,11 +3,12 @@ jdk:
 - oraclejdk7
 - openjdk7
 - openjdk6
-deploy:
-  provider: releases
-  api_key:
-    secure: OBTNboMp2o3Y9Qh+ApfwvPBiEE9nHgMvVYfZQbtTA7xeB6QPdCDXzuptdni42j+8mWY7yt+flg5MBCEXqMi5U4EE6PLdX2Ne4MM1uGHsiZ8JgulROySmVbylnRBJjlfQ/NVowXVDEoPWwRPTSGoiaQfGGX0MCQl6bv9GZNihntA=
-  file: 'target/java-xml-utils.jar'
-  on:
-    repo: salifou/java-xml-utils
-    tag: true
+#deploy:
+#  provider: releases
+#  api_key:
+#    secure: OBTNboMp2o3Y9Qh+ApfwvPBiEE9nHgMvVYfZQbtTA7xeB6QPdCDXzuptdni42j+8mWY7yt+flg5MBCEXqMi5U4EE6PLdX2Ne4MM1uGHsiZ8JgulROySmVbylnRBJjlfQ/NVowXVDEoPWwRPTSGoiaQfGGX0MCQl6bv9GZNihntA=
+#  file: 'target/java-xml-utils.jar'
+#  on:
+#    repo: salifou/java-xml-utils
+#    tag: true
+#

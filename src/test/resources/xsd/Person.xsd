@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<xs:include schemaLocation="Commons.xsd"/>
+
+<xs:element name="List">
+    <xs:complexType>
+        <xs:sequence>
+            <xs:element name="Person" type="PersonType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:element>
+
+<xs:complexType name="AddressType">
+    <xs:sequence>
+        <xs:element name="Line1" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="Line2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="ZipCode" type="xs:string" minOccurs="1" maxOccurs="1" default="20878"/>
+        <xs:element name="State" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="PersonType">
+    <xs:sequence>
+        <xs:element name="Address" type="AddressType" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="FullName" type="NonEmptyString" use="required"/>
+    <xs:attribute name="Role" type="xs:string" default="User"/>
+</xs:complexType>
+
+</xs:schema>
