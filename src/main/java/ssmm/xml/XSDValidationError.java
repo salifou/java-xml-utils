@@ -12,6 +12,7 @@ public class XSDValidationError extends Exception {
     private List<String> errors;
 
     public XSDValidationError(List<String> errors) {
+        super(errorsAsString(errors));
         this.errors = errors;
     }
 
@@ -21,4 +22,14 @@ public class XSDValidationError extends Exception {
     public List<String> getErrors() {
         return errors;
     }
+
+    private static String errorsAsString(List<String> errors) {
+        if( errors == null ) return "";
+
+        StringBuilder sb = new StringBuilder("XSD Schema validation errors: ");
+        for( String s: errors)
+            sb = sb.append(s).append("\n");
+        return sb.toString();
+    }
+
 }

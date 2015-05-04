@@ -1,6 +1,5 @@
 package ssmm.xml;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
@@ -9,107 +8,204 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.List;
 
 public class XSDValidator {
 
     final static String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
+    /*==========================================================================
+     *****************        SAX Based validation             *****************
+     =========================================================================*/
     /**
-     * Validates the source and returns the unified result if no error
-     * @param source - The source to be validated
+     * Validate the SAX Source against the XSD schema
+     * @param source - The SAX Source document to be validated
      * @param xsd    - The XSD schema
-     * @return  The resulting document as a string or throw an:
-     *         - XSDValidationException if the XML is not valid against the XSD
-     *         - DocumentBuilderException for all other errors
+     * @throws XSDValidationError if there are validation errors
      * @throws DocumentBuilderException
-     * @throws XSDValidationError
      */
-    public static String validate(
-            StreamSource source,
-            InputStream xsd)
-            throws DocumentBuilderException, XSDValidationError {
+    public static void validate(
+            SAXSource source,
+            InputStream xsd
+        ) throws XSDValidationError, DocumentBuilderException {
 
-        return validate(source, xsd, null);
+        validate(source, null, xsd, null);
     }
 
     /**
-     * Validates the source and returns the unified result if no error
-     * @param source - The source to be validated
+     * Validate the SAX Source against the XSD schema
+     * @param source - The SAX Source document to be validated
      * @param xsd    - The XSD schema
      * @param lsr    - The resource resolver
-     * @return  The resulting document as a string or throw an:
-     *         - XSDValidationException if the XML is not valid against the XSD
-     *         - DocumentBuilderException for all other errors
+     * @throws XSDValidationError if there are validation errors
      * @throws DocumentBuilderException
-     * @throws XSDValidationError
      */
-    public static String validate(
+    public static void validate(
+            SAXSource source,
+            InputStream xsd,
+            LSResourceResolver lsr
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        validate(source, null, xsd, lsr);
+    }
+
+    /**
+     * Validate the SAX Source against the XSD schema
+     * @param source - The SAX Source document to be validated
+     * @param result - The SAX Result
+     * @param xsd    - The XSD schema
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            SAXSource source,
+            SAXResult result,
+            InputStream xsd
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        validate(source, result, xsd, null);
+    }
+
+    /**
+     * Validate the SAX Source against the XSD schema
+     * @param source - The SAX Source document to be validated
+     * @param result - The SAX Result
+     * @param xsd    - The XSD schema
+     * @param lsr    - The resource resolver
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            SAXSource source,
+            SAXResult result,
+            InputStream xsd,
+            LSResourceResolver lsr
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        genericValidation(source, result, xsd, lsr);
+    }
+
+    /*==========================================================================
+     *****************        DOM Based validation             *****************
+     =========================================================================*/
+
+    /**
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param xsd    - The XSD schema
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            DOMSource source,
+            InputStream  xsd
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        validate(source, null, xsd, null);
+    }
+
+    /**
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param xsd    - The XSD schema
+     * @param lsr    - The resource resolver
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            DOMSource source,
+            InputStream  xsd,
+            LSResourceResolver lsr
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        validate(source, null, xsd, lsr);
+    }
+
+    /**
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param result - The DOM Result
+     * @param xsd    - The XSD schema
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            DOMSource source,
+            DOMResult result,
+            InputStream  xsd
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        validate(source, result, xsd, null);
+    }
+
+    /**
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param result - The DOM Result
+     * @param xsd    - The XSD schema
+     * @param lsr    - The resource resolver
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
+            DOMSource source,
+            DOMResult result,
+            InputStream  xsd,
+            LSResourceResolver lsr
+        ) throws XSDValidationError, DocumentBuilderException {
+
+        genericValidation(source, result, xsd, lsr);
+    }
+
+    /*==========================================================================
+     *****************       Stream Based validation           *****************
+     =========================================================================*/
+
+    /*
+     * Note:
+     *
+     * Contrary to SAX and DOM Result, the Stream Result does not seems to be
+     * augmented with additional information (e.g. default attribute value)
+     * defined in the XSD schema.
+     */
+
+    /**
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param xsd    - The XSD schema
+     * @throws XSDValidationError if there are validation errors
+     * @throws DocumentBuilderException
+     */
+    public static void validate(
             StreamSource source,
-            InputStream xsd,
-            LSResourceResolver lsr)
-            throws DocumentBuilderException, XSDValidationError {
+            InputStream  xsd
+    ) throws XSDValidationError, DocumentBuilderException {
 
-        StreamResult result = new StreamResult( new ByteArrayOutputStream());
-        //StreamResult result = new StreamResult( new StringWriter() );
-        validate(source, result, xsd, lsr);
-        return new String( ((ByteArrayOutputStream) result.getOutputStream()).toByteArray() ); //result.getWriter().toString();
-    }
-
-
-    /**
-     * Validates the Document and returns the DOM if no error
-     * @param doc - The org.w3c.Document to be validated
-     * @param xsd - The XSD schema
-     * @return  The Document or throw an:
-     *         - XSDValidationException if the XML is not valid against the XSD
-     *         - DocumentBuilderException for all other errors
-     * @throws DocumentBuilderException
-     * @throws XSDValidationError
-     */
-    public static Document validate(Document doc, InputStream xsd)
-            throws DocumentBuilderException, XSDValidationError {
-
-        return validate(doc, xsd, null);
+        genericValidation(source, null, xsd, null);
     }
 
     /**
-     * Validates the Document and returns the DOM if no error
-     * @param doc - The org.w3c.Document to be validated
-     * @param xsd - The XSD schema
-     * @param lsr - The resource resolver
-     * @return  The Document or throw an:
-     *         - XSDValidationException if the XML is not valid against the XSD
-     *         - DocumentBuilderException for all other errors
+     * Validate the DOM Source against the XSD schema
+     * @param source - The DOM Source
+     * @param xsd    - The XSD schema
+     * @param lsr    - The resource resolver
+     * @throws XSDValidationError if there are validation errors
      * @throws DocumentBuilderException
-     * @throws XSDValidationError
      */
-    public static Document validate(
-            Document doc,
-            InputStream xsd,
-            LSResourceResolver lsr)
-            throws DocumentBuilderException, XSDValidationError {
-        try {
-            //FIXME Check what happens if doc is null
+    public static void validate(
+            StreamSource source,
+            InputStream  xsd,
+            LSResourceResolver lsr
+    ) throws XSDValidationError, DocumentBuilderException {
 
-            DOMSource source = new DOMSource(doc);
-            DOMResult result = new DOMResult();
-            validate(source, result, xsd, lsr);
-
-            return (Document) result.getNode();
-
-        } catch (Exception e) {
-            throw new DocumentBuilderException(e.getMessage(), e.getCause());
-        }
+        genericValidation(source, null, xsd, lsr);
     }
 
     /**
@@ -124,39 +220,37 @@ public class XSDValidator {
      * @throws DocumentBuilderException
      * @throws XSDValidationError
      */
-    private static Result validate(
+    private static Result genericValidation(
             Source source,
             Result result,
             InputStream xsd,
             LSResourceResolver lsr)
             throws DocumentBuilderException, XSDValidationError {
+
+        List<String> errors;
         try {
             Validator validator = createValidator(xsd, lsr);
-
-            //Validate the source and store the resulted document in result
             validator.validate(source, result);
-
-            //Throw an XSDValidationError exception if there are validation errors
-            MyErrorHandler eh   = ((MyErrorHandler) validator.getErrorHandler());
-            List<String> errors = eh.getErrors();
-            if( errors != null && !errors.isEmpty() )
-                throw new XSDValidationError( errors );
-
-            return result;
+            errors = ((MyErrorHandler) validator.getErrorHandler()).getErrors();
         } catch (Exception e) {
             throw new DocumentBuilderException(e.getMessage(), e.getCause());
         }
+        //Throw an XSDValidationError exception if there are validation errors
+        if( errors != null && !errors.isEmpty() )
+            throw new XSDValidationError( errors );
+        return result;
     }
 
     /**
      * Creates and returns the schema validator
      * @param xsd - The XSD schema
      * @param lsr - The LSResourceResolver
-     * @return The schema validator
+     * @return The XSD schema validator
      * @throws org.xml.sax.SAXException
      */
     private static Validator createValidator(
             InputStream xsd, LSResourceResolver lsr) throws SAXException {
+
         SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
         // Configure the resource resolver
         if( lsr != null )

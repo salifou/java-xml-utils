@@ -3,46 +3,129 @@ package ssmm.xml;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.LSResourceResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import java.io.InputStream;
-import java.util.Scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class XSDValidatorTest {
 
-    InputStream xsd = getClass().getResourceAsStream("/xsd/Person.xsd");
-    InputStream xml = getClass().getResourceAsStream("/xsd/People.xml");
+    InputStream xsd = null;
+    InputStream xml = null;
+    InputStream invalidXML = null;
     LSResourceResolver lsr = new LocalLSResourceResolver("/xsd");
 
-    /*@Before
+    @Before
     public void init() {
         xsd = getClass().getResourceAsStream("/xsd/Person.xsd");
         xml = getClass().getResourceAsStream("/xsd/People.xml");
-        lsr = new LocalLSResourceResolver("/xsd");
-    }*/
+        invalidXML = getClass().getResourceAsStream("/xsd/PeopleInvalid.xml");
+    }
 
     @Test
-    public void streamBasedTest() {
-        StreamSource source = new StreamSource(xml);
-
+    public void saxValidTest() {
         try {
-            String result = XSDValidator.validate(source, xsd, lsr);
-            assertNotNull(result);
-
-            System.out.println("==============================================");
-
-            System.out.println(result);
-        } catch (DocumentBuilderException e) {
+            SAXSource source  = new SAXSource( new InputSource(xml) );
+            SAXResult result  = new SAXResult( new DefaultHandler() );
+            XSDValidator.validate(source, result, xsd, lsr);
+        } catch (DocumentBuilderException|XSDValidationError e) {
             fail(e.getMessage());
-        } catch (XSDValidationError xsdValidationError) {
-            fail(xsdValidationError.getMessage());
+        }
+    }
+
+    @Test
+    public void domValidTest() {
+        try {
+            Document doc = createDocument(xml);
+            DOMSource source  = new DOMSource(doc);
+            DOMResult result  = new DOMResult();
+            XSDValidator.validate(source, result, xsd, lsr);
+        } catch (DocumentBuilderException|XSDValidationError e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void streamValidTest() {
+        try {
+            StreamSource source = new StreamSource(xml);
+            XSDValidator.validate(source, xsd, lsr);
+        } catch (DocumentBuilderException|XSDValidationError e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test(expected = XSDValidationError.class)
+    public void saxInvalidTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        SAXSource source  = new SAXSource( new InputSource(invalidXML) );
+        SAXResult result  = new SAXResult( new DefaultHandler() );
+        XSDValidator.validate(source, result, xsd, lsr);
+    }
+
+    @Test(expected = XSDValidationError.class)
+    public void domInvalidTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        Document doc = createDocument(invalidXML);
+        DOMSource source  = new DOMSource(doc);
+        DOMResult result  = new DOMResult();
+        XSDValidator.validate(source, result, xsd, lsr);
+    }
+
+    @Test(expected = XSDValidationError.class)
+    public void streamInvalidTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        StreamSource source = new StreamSource(invalidXML);
+        XSDValidator.validate(source, xsd, lsr);
+    }
+
+    @Test(expected = DocumentBuilderException.class)
+    public void saxDocumentBuilderExceptionTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        SAXSource source  = new SAXSource( new InputSource(xml) );
+        SAXResult result  = new SAXResult( new DefaultHandler() );
+        XSDValidator.validate(source, result, xsd);
+    }
+
+    @Test(expected = DocumentBuilderException.class)
+    public void domDocumentBuilderExceptionTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        Document doc = createDocument(xml);
+        DOMSource source  = new DOMSource(doc);
+        DOMResult result  = new DOMResult();
+        XSDValidator.validate(source, result, xsd);
+    }
+
+    @Test(expected = DocumentBuilderException.class)
+    public void streamDocumentBuilderExceptionTest()
+            throws XSDValidationError, DocumentBuilderException {
+
+        XSDValidator.validate(new StreamSource(xml), xsd);
+    }
+
+    private Document createDocument(InputStream xml) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            javax.xml.parsers.DocumentBuilder builder = dbf.newDocumentBuilder();
+            return builder.parse(xml);
+        } catch (Exception e) {
+            fail( e.getMessage() );
+            return null;
         }
     }
 
