@@ -17,6 +17,11 @@ import javax.xml.validation.Validator;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Provides utilities methods for validating XML against an XSD schema.
+ *
+ * @author Salifou Sidi M. Malick <salifou.sidi@gmail.com>
+ */
 public class XSDValidator {
 
     final static String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
