@@ -38,8 +38,8 @@ public class XSDValidator {
      */
     public static void validate(
             SAXSource source,
-            InputStream xsd
-        ) throws XSDValidationError, DocumentBuilderException {
+            InputStream xsd)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, null, xsd, null);
     }
@@ -55,8 +55,8 @@ public class XSDValidator {
     public static void validate(
             SAXSource source,
             InputStream xsd,
-            LSResourceResolver lsr
-        ) throws XSDValidationError, DocumentBuilderException {
+            LSResourceResolver lsr)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, null, xsd, lsr);
     }
@@ -72,8 +72,8 @@ public class XSDValidator {
     public static void validate(
             SAXSource source,
             SAXResult result,
-            InputStream xsd
-        ) throws XSDValidationError, DocumentBuilderException {
+            InputStream xsd)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, result, xsd, null);
     }
@@ -91,8 +91,8 @@ public class XSDValidator {
             SAXSource source,
             SAXResult result,
             InputStream xsd,
-            LSResourceResolver lsr
-        ) throws XSDValidationError, DocumentBuilderException {
+            LSResourceResolver lsr)
+            throws XSDValidationError, DocumentBuilderException {
 
         genericValidation(source, result, xsd, lsr);
     }
@@ -110,8 +110,8 @@ public class XSDValidator {
      */
     public static void validate(
             DOMSource source,
-            InputStream  xsd
-        ) throws XSDValidationError, DocumentBuilderException {
+            InputStream  xsd)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, null, xsd, null);
     }
@@ -127,8 +127,8 @@ public class XSDValidator {
     public static void validate(
             DOMSource source,
             InputStream  xsd,
-            LSResourceResolver lsr
-        ) throws XSDValidationError, DocumentBuilderException {
+            LSResourceResolver lsr)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, null, xsd, lsr);
     }
@@ -144,8 +144,8 @@ public class XSDValidator {
     public static void validate(
             DOMSource source,
             DOMResult result,
-            InputStream  xsd
-        ) throws XSDValidationError, DocumentBuilderException {
+            InputStream  xsd)
+            throws XSDValidationError, DocumentBuilderException {
 
         validate(source, result, xsd, null);
     }
@@ -163,8 +163,8 @@ public class XSDValidator {
             DOMSource source,
             DOMResult result,
             InputStream  xsd,
-            LSResourceResolver lsr
-        ) throws XSDValidationError, DocumentBuilderException {
+            LSResourceResolver lsr)
+            throws XSDValidationError, DocumentBuilderException {
 
         genericValidation(source, result, xsd, lsr);
     }
@@ -190,8 +190,8 @@ public class XSDValidator {
      */
     public static void validate(
             StreamSource source,
-            InputStream  xsd
-    ) throws XSDValidationError, DocumentBuilderException {
+            InputStream  xsd)
+            throws XSDValidationError, DocumentBuilderException {
 
         genericValidation(source, null, xsd, null);
     }
@@ -207,8 +207,8 @@ public class XSDValidator {
     public static void validate(
             StreamSource source,
             InputStream  xsd,
-            LSResourceResolver lsr
-    ) throws XSDValidationError, DocumentBuilderException {
+            LSResourceResolver lsr)
+            throws XSDValidationError, DocumentBuilderException {
 
         genericValidation(source, null, xsd, lsr);
     }
